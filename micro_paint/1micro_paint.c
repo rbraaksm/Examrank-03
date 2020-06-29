@@ -5,28 +5,28 @@
 /*                                                     +:+                    */
 /*   By: renebraaksma <renebraaksma@student.42.f      +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2020/06/29 19:13:23 by rbraaksm      #+#    #+#                 */
-/*   Updated: 2020/06/29 20:03:22 by rbraaksm      ########   odam.nl         */
+/*   Created: 2020/06/23 19:57:16 by rbraaksm      #+#    #+#                 */
+/*   Updated: 2020/06/29 19:57:41 by rbraaksm      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <math.h>
 
-typedef struct	s_micro
+typedef struct	s_data
 {
 	int		width;
 	int		height;
-	char	b;
+	char	back;
 	char	t;
-	char	c;
 	float	x;
 	float	y;
 	float	w;
 	float	h;
-}				t_micro;
+	char	c;
+}				t_data;
 
 int		ft_strlen(char *str)
 {
@@ -46,26 +46,13 @@ int		error(char *str)
 
 int		clean(FILE *file, char *str)
 {
-	if (str)
-		free(str);
 	fclose(file);
+	if (str != NULL)
+		free(str);
 	return (error("Error: Operation file corrupted\n"));
 }
 
-void	structzero(t_micro *d)
-{
-	d->width = 0;
-	d->height = 0;
-	d->b = 0;
-	d->t = 0;
-	d->c = 0;
-	d->x = 0;
-	d->y = 0;
-	d->w = 0;
-	d->h = 0;
-}
-
-int		rectangle(t_micro *d, float x, float y)
+int		rectangle(t_data *d, float x, float y)
 {
 	if (x < d->x || (d->x + d->w) < x || y < d->y || (d->y + d->h) < y)
 		return (0);
@@ -75,7 +62,7 @@ int		rectangle(t_micro *d, float x, float y)
 	return (1);
 }
 
-void 	draw_shape(t_micro *d, char *str)
+void	draw_shape(t_data *d, char *str)
 {
 	int	x;
 	int	y;
@@ -96,7 +83,7 @@ void 	draw_shape(t_micro *d, char *str)
 	}
 }
 
-int		shape(FILE *file, t_micro *d, char *str)
+int		shape(FILE *file, t_data *d, char *str)
 {
 	int		ret;
 
@@ -113,44 +100,26 @@ int		shape(FILE *file, t_micro *d, char *str)
 
 int		main(int argc, char **argv)
 {
-	FILE 	*file;
-	t_micro d;
-	char 	*str;
+	FILE	*file;
+	t_data	d;
+	char	*str;
 	int		i;
 
-// 	if (fscanf(file, "%d %d %c\n", &d.width, &d.height, &d.back) != 3)
-// 		return (clean(file, NULL));
-// 	if (d.width <= 0 || d.width > 300 || d.height <= 0 || d.height > 300)
-// 		return (clean(file, NULL));
-// 	str = malloc(sizeof(char *) * (d.width * d.height));
-// 	if (str == NULL)
-// 		return (clean(file, NULL));
-// 	while (i < (d.width * d.height))
-// 		str[i++] = d.back;
-// 	if (!shape(file, &d, str))
-// 		return (clean(file, str));
-// 	i = 0;
-// 	while (i < d.height)
-// 	{
-// 		write(1, str + (i * d.width), d.width);
-// 		write(1, "\n", 1);
-// 		i++;
-
-	i = 0;
 	str = NULL;
+	i = 0;
 	if (argc != 2)
 		return (error("Error: Argument\n"));
 	if (!(file = fopen(argv[1], "r")))
 		return (error("Error: Operation file corrupted\n"));
-	if (fscanf(file, "%d %d %c\n", &d.width, &d.height, &d.b) != 3)
+	if (fscanf(file, "%d %d %c\n", &d.width, &d.height, &d.back) != 3)
 		return (clean(file, NULL));
 	if (d.width <= 0 || d.width > 300 || d.height <= 0 || d.height > 300)
 		return (clean(file, NULL));
-	str = malloc(sizeof(char*)*(d.width * d.height));
+	str = malloc(sizeof(char *) * (d.width * d.height));
 	if (str == NULL)
 		return (clean(file, NULL));
 	while (i < (d.width * d.height))
-		str[i++] = d.b;
+		str[i++] = d.back;
 	if (!shape(file, &d, str))
 		return (clean(file, str));
 	i = 0;
